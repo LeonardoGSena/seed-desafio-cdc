@@ -14,7 +14,7 @@ public class Autor {
     private String nome;
     private String email;
     private String descricao;
-    private LocalDateTime instante;
+    private LocalDateTime instanteCriacao = LocalDateTime.now();
 
     public Autor() {
     }
@@ -24,7 +24,12 @@ public class Autor {
         this.nome = nome;
         this.email = email;
         this.descricao = descricao;
-        this.instante = instante.now();
+    }
+
+    public Autor(DadosCadastroAutor dados) {
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.descricao = dados.descricao();
     }
 
     public Long getId() {
@@ -43,8 +48,8 @@ public class Autor {
         return descricao;
     }
 
-    public LocalDateTime getInstante() {
-        return instante;
+    public LocalDateTime getInstanteCriacao() {
+        return instanteCriacao;
     }
 
     @Override
