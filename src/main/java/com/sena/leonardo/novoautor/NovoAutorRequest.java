@@ -1,5 +1,6 @@
 package com.sena.leonardo.novoautor;
 
+import com.sena.leonardo.compartilhado.UniqueValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,6 +11,7 @@ public class NovoAutorRequest {
     private String nome;
     @NotBlank
     @Email
+    @UniqueValue(domainClass = Autor.class, fieldName = "email")
     private String email;
     @NotBlank
     @Size(max = 400)
@@ -23,5 +25,9 @@ public class NovoAutorRequest {
 
     public Autor toModel() {
         return new Autor(this.nome, this.email, this.descricao);
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

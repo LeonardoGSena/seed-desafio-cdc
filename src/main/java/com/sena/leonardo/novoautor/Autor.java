@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
@@ -26,6 +25,10 @@ public class Autor {
     @Size(max = 400)
     private String descricao;
     private LocalDateTime instanciaCriacao = LocalDateTime.now();
+
+    @Deprecated
+    public Autor() {
+    }
 
     public Autor(@NotBlank String nome, @NotBlank @Email String email, @NotBlank @Size(max = 400) String descricao) {
         if (nome == null || nome.trim().equals("")) {
