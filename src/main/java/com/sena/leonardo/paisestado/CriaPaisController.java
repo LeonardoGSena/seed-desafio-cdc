@@ -1,4 +1,4 @@
-package com.sena.leonardo.novacategoria;
+package com.sena.leonardo.paisestado;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -9,18 +9,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CategoriaController {
+public class CriaPaisController {
 
     @PersistenceContext
     private EntityManager manager;
 
-    @PostMapping(value = "/categorias")
+    @PostMapping(value = "/paises")
     @Transactional
-    public String criaCategoria(@RequestBody @Valid NovaCategoriaRequest request) {
-        Categoria novaCategoria = new Categoria(request.getNome());
-        manager.persist(novaCategoria);
-        return novaCategoria.toString();
+    public String criaPais(@RequestBody @Valid NovoPaisRequest request) {
+        Pais novoPais = new Pais(request.getNome());
+        manager.persist(novoPais);
+        return novoPais.toString();
     }
-
-
 }
