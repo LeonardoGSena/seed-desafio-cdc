@@ -40,14 +40,11 @@ public class Pais {
 
         Pais pais = (Pais) o;
 
-        if (id != null ? !id.equals(pais.id) : pais.id != null) return false;
         return nome != null ? nome.equals(pais.nome) : pais.nome == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (nome != null ? nome.hashCode() : 0);
-        return result;
+        return nome != null ? nome.hashCode() : 0;
     }
 }
