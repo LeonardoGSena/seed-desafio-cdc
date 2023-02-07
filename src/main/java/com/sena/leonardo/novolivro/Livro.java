@@ -112,4 +112,19 @@ public class Livro {
                 ", categoria=" + categoria +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Livro livro = (Livro) o;
+
+        return isbn != null ? isbn.equals(livro.isbn) : livro.isbn == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return isbn != null ? isbn.hashCode() : 0;
+    }
 }

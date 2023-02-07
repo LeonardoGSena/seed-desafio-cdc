@@ -3,6 +3,8 @@ package com.sena.leonardo.fechamentocompra;
 import com.sena.leonardo.compartilhado.ExistsId;
 import com.sena.leonardo.paisestado.Estado;
 import com.sena.leonardo.paisestado.Pais;
+import jakarta.persistence.EntityManager;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,15 +32,17 @@ public class NovaCompraRequest {
     @NotNull
     @ExistsId(domainClass = Pais.class, fieldName = "id")
     private Long idPais;
-    @NotNull
     @ExistsId(domainClass = Estado.class, fieldName = "id")
     private Long idEstado;
     @NotBlank
     private String telefone;
     @NotBlank
     private String cep;
+    @Valid
+    @NotNull
+    private NovoPedidoRequest pedido;
 
-    public NovaCompraRequest(String email, String nome, String sobrenome, String documento, String endereco, String complemento, String cidade, Long idPais, Long idEstado, String telefone, String cep) {
+    public NovaCompraRequest(String email, String nome, String sobrenome, String documento, String endereco, String complemento, String cidade, Long idPais, Long idEstado, String telefone, String cep, NovoPedidoRequest pedido) {
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -50,6 +54,7 @@ public class NovaCompraRequest {
         this.idEstado = idEstado;
         this.telefone = telefone;
         this.cep = cep;
+        this.pedido = pedido;
     }
 
     public String getDocumento() {
@@ -82,6 +87,7 @@ public class NovaCompraRequest {
                 ", idEstado=" + idEstado +
                 ", telefone='" + telefone + '\'' +
                 ", cep='" + cep + '\'' +
+                ", pedido=" + pedido +
                 '}';
     }
 
@@ -91,5 +97,24 @@ public class NovaCompraRequest {
 
     public Long getIdEstado() {
         return idEstado;
+    }
+
+    public NovoPedidoRequest getPedido() {
+        return pedido;
+    }
+
+    public Compra toModel(EntityManager manager) {
+        @NotNull Pais pais = manager.find(Pais.class, idPais);
+        Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep);
+        if (idEstado != null) {
+            compra.setEstado(manager.find(Estado.class, idEstado));
+        }
+
+        Pedido novoPedido = pedido.toModel(compra, manager);
+        return compra;
+    }
+
+    public boolean temEstado() {
+        return idEstado!=null;
     }
 }

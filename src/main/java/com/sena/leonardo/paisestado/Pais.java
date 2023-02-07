@@ -1,7 +1,5 @@
 package com.sena.leonardo.paisestado;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.sena.leonardo.compartilhado.UniqueValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
