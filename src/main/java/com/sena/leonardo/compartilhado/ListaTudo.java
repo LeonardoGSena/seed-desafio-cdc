@@ -27,6 +27,9 @@ public class ListaTudo {
         List livros = manager.createQuery("SELECT l FROM Livro l").getResultList();
         resultado.put("livros", livros.toString());
 
+        List cupons = manager.createQuery("SELECT c FROM Cupom c").getResultList();
+        resultado.put("cupons", cupons.toString());
+
         return resultado;
     }
 }

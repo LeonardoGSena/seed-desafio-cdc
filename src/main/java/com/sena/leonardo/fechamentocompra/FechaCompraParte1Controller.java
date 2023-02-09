@@ -18,6 +18,8 @@ public class FechaCompraParte1Controller {
     private EstadoPertenceAPaisValidator estadoPertenceAPaisValidator;
     @PersistenceContext
     private EntityManager manager;
+    @Autowired
+    private CupomRepository cupomRepository;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -27,7 +29,7 @@ public class FechaCompraParte1Controller {
     @PostMapping(value = "/compras")
     @Transactional
     public String cria(@RequestBody @Valid NovaCompraRequest request) {
-        Compra novaCompra = request.toModel(manager);
+        Compra novaCompra = request.toModel(manager, cupomRepository);
         manager.persist(novaCompra);
         return novaCompra.toString();
     }

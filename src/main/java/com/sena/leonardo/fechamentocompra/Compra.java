@@ -1,5 +1,6 @@
 package com.sena.leonardo.fechamentocompra;
 
+import com.sena.leonardo.cadastrocupom.Cupom;
 import com.sena.leonardo.paisestado.Estado;
 import com.sena.leonardo.paisestado.Pais;
 import jakarta.persistence.*;
@@ -41,6 +42,8 @@ public class Compra {
     private Estado estado;
     @OneToOne(mappedBy = "compra", cascade = CascadeType.PERSIST)
     private Pedido pedido;
+    @Embedded
+    private CupomAplicado cupomAplicado;
 
     public Compra(String email, String nome, String sobrenome, String documento, String endereco, String complemento, Pais pais, String telefone, String cep, Function<Compra, Pedido> funcaoCriacaoPedido) {
         this.email = email;
@@ -61,10 +64,17 @@ public class Compra {
         this.estado = estado;
     }
 
+    public void aplicaCupom(Cupom cupom) {
+        Assert.isTrue(cupom.valido(), "Olha, o cupom que está sendo aplicado não está mais válido");
+        Assert.isNull(cupomAplicado, "Olha, você não pode trocar um compom de uma compra");
+        this.cupomAplicado = new CupomAplicado(cupom);
+    }
+
     @Override
     public String toString() {
         return "Compra{" +
-                "email='" + email + '\'' +
+                "id=" + id +
+                ", email='" + email + '\'' +
                 ", nome='" + nome + '\'' +
                 ", sobrenome='" + sobrenome + '\'' +
                 ", documento='" + documento + '\'' +
@@ -75,6 +85,7 @@ public class Compra {
                 ", cep='" + cep + '\'' +
                 ", estado=" + estado +
                 ", pedido=" + pedido +
+                ", cupomAplicado=" + cupomAplicado +
                 '}';
     }
 }

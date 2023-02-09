@@ -1,5 +1,6 @@
 package com.sena.leonardo.fechamentocompra;
 
+import com.sena.leonardo.cadastrocupom.Cupom;
 import com.sena.leonardo.compartilhado.ExistsId;
 import com.sena.leonardo.paisestado.Estado;
 import com.sena.leonardo.paisestado.Pais;
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CNPJValidator;
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.function.Function;
 
@@ -43,8 +45,20 @@ public class NovaCompraRequest {
     @Valid
     @NotNull
     private NovoPedidoRequest pedido;
+    private String codigoCupom;
 
-    public NovaCompraRequest(String email, String nome, String sobrenome, String documento, String endereco, String complemento, String cidade, Long idPais, Long idEstado, String telefone, String cep, NovoPedidoRequest pedido) {
+    public NovaCompraRequest(String email,
+                             String nome,
+                             String sobrenome,
+                             String documento,
+                             String endereco,
+                             String complemento,
+                             String cidade,
+                             Long idPais,
+                             Long idEstado,
+                             String telefone,
+                             String cep,
+                             NovoPedidoRequest pedido) {
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -59,10 +73,6 @@ public class NovaCompraRequest {
         this.pedido = pedido;
     }
 
-    public String getDocumento() {
-        return documento;
-    }
-
     public boolean documentoValido() {
         Assert.hasLength(documento, "Você não deveria validar o documento se ele ainda nao tiver sido preenchido");
 
@@ -73,6 +83,48 @@ public class NovaCompraRequest {
         cnpjValidator.initialize(null);
 
         return cpfValidator.isValid(documento, null) || cnpjValidator.isValid(documento, null);
+    }
+
+    public Compra toModel(EntityManager manager, CupomRepository cupomRepository) {
+        @NotNull Pais pais = manager.find(Pais.class, idPais);
+
+        Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
+
+        Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep, funcaoCriacaoPedido);
+        if (idEstado != null) {
+            compra.setEstado(manager.find(Estado.class, idEstado));
+        }
+
+        if (StringUtils.hasText(this.codigoCupom)) {
+            Cupom cupom = cupomRepository.getByCodigo(this.codigoCupom);
+            compra.aplicaCupom(cupom);
+        }
+
+        return compra;
+    }
+
+    public boolean temEstado() {
+        return idEstado!=null;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public Long getIdPais() {
+        return idPais;
+    }
+
+    public Long getIdEstado() {
+        return idEstado;
+    }
+
+    public NovoPedidoRequest getPedido() {
+        return pedido;
+    }
+
+    public void setCodigoCupom(String codigoCupom) {
+        this.codigoCupom = codigoCupom;
     }
 
     @Override
@@ -91,34 +143,5 @@ public class NovaCompraRequest {
                 ", cep='" + cep + '\'' +
                 ", pedido=" + pedido +
                 '}';
-    }
-
-    public Long getIdPais() {
-        return idPais;
-    }
-
-    public Long getIdEstado() {
-        return idEstado;
-    }
-
-    public NovoPedidoRequest getPedido() {
-        return pedido;
-    }
-
-    public Compra toModel(EntityManager manager) {
-        @NotNull Pais pais = manager.find(Pais.class, idPais);
-
-        Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
-
-        Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep, funcaoCriacaoPedido);
-        if (idEstado != null) {
-            compra.setEstado(manager.find(Estado.class, idEstado));
-        }
-
-        return compra;
-    }
-
-    public boolean temEstado() {
-        return idEstado!=null;
     }
 }
