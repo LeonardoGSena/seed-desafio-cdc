@@ -12,6 +12,8 @@ import org.hibernate.validator.internal.constraintvalidators.hv.br.CNPJValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
 import org.springframework.util.Assert;
 
+import java.util.function.Function;
+
 public class NovaCompraRequest {
 
     @NotBlank
@@ -105,12 +107,14 @@ public class NovaCompraRequest {
 
     public Compra toModel(EntityManager manager) {
         @NotNull Pais pais = manager.find(Pais.class, idPais);
-        Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep);
+
+        Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
+
+        Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep, funcaoCriacaoPedido);
         if (idEstado != null) {
             compra.setEstado(manager.find(Estado.class, idEstado));
         }
 
-        Pedido novoPedido = pedido.toModel(compra, manager);
         return compra;
     }
 

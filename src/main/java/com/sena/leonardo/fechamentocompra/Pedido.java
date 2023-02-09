@@ -1,5 +1,6 @@
 package com.sena.leonardo.fechamentocompra;
 
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -10,11 +11,18 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
 public class Pedido {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotNull
     @Valid
+    @OneToOne
     private Compra compra;
     @Size(min = 1)
+    @ElementCollection
     private Set<ItemPedido> itens = new HashSet<>();
 
     public Pedido(@NotNull @Valid Compra compra, @Size(min = 1) Set<ItemPedido> itens) {

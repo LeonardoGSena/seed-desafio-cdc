@@ -1,6 +1,7 @@
 package com.sena.leonardo.fechamentocompra;
 
 import com.sena.leonardo.novolivro.Livro;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
+@Embeddable
 public class ItemPedido {
 
     @ManyToOne
@@ -17,6 +19,10 @@ public class ItemPedido {
     private int quantidade;
     @Positive
     private BigDecimal precoMomento;
+
+    @Deprecated
+    public ItemPedido() {
+    }
 
     public ItemPedido(@NotNull Livro livro, @Positive int quantidade) {
         this.livro = livro;

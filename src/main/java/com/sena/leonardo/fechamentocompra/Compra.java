@@ -2,15 +2,21 @@ package com.sena.leonardo.fechamentocompra;
 
 import com.sena.leonardo.paisestado.Estado;
 import com.sena.leonardo.paisestado.Pais;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 
+import java.util.function.Function;
+
+@Entity
 public class Compra {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Email
     @NotBlank
     private String email;
@@ -33,8 +39,10 @@ public class Compra {
     private String cep;
     @ManyToOne
     private Estado estado;
+    @OneToOne(mappedBy = "compra", cascade = CascadeType.PERSIST)
+    private Pedido pedido;
 
-    public Compra(String email, String nome, String sobrenome, String documento, String endereco, String complemento, Pais pais, String telefone, String cep) {
+    public Compra(String email, String nome, String sobrenome, String documento, String endereco, String complemento, Pais pais, String telefone, String cep, Function<Compra, Pedido> funcaoCriacaoPedido) {
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -44,6 +52,7 @@ public class Compra {
         this.pais = pais;
         this.telefone = telefone;
         this.cep = cep;
+        this.pedido = funcaoCriacaoPedido.apply(this);
     }
 
     public void setEstado(@NotBlank @Valid Estado estado) {
@@ -65,6 +74,7 @@ public class Compra {
                 ", telefone='" + telefone + '\'' +
                 ", cep='" + cep + '\'' +
                 ", estado=" + estado +
+                ", pedido=" + pedido +
                 '}';
     }
 }

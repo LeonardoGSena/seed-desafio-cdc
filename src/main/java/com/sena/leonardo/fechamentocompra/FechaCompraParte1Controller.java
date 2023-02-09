@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class FechaCompraParte1 {
+public class FechaCompraParte1Controller {
 
     @Autowired
     private EstadoPertenceAPaisValidator estadoPertenceAPaisValidator;
@@ -28,6 +28,7 @@ public class FechaCompraParte1 {
     @Transactional
     public String cria(@RequestBody @Valid NovaCompraRequest request) {
         Compra novaCompra = request.toModel(manager);
+        manager.persist(novaCompra);
         return novaCompra.toString();
     }
 }
