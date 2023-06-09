@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class NovoCupomRequest {
+public class NovoCupomRequest implements DadosNovoCupom {
 
     @NotBlank
     @UniqueValue(domainClass = Cupom.class, fieldName = "codigo")

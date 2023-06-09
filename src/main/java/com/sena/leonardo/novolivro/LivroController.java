@@ -1,7 +1,5 @@
 package com.sena.leonardo.novolivro;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -10,16 +8,16 @@ import org.springframework.web.bind.annotation.*;
 //2
 public class LivroController {
 
-    @PersistenceContext
-    private EntityManager manager;
+    private final CadastroNovoLivro cadastroNovoLivro;
+
+    public LivroController(CadastroNovoLivro cadastroNovoLivro) {
+        this.cadastroNovoLivro = cadastroNovoLivro;
+    }
 
     @PostMapping(value = "/livros")
     @Transactional
-    //1
     public String criaLivro(@RequestBody @Valid NovoLivroRequest request) {
-        //1
-        Livro novoLivro = request.toModel(manager);
-        manager.persist(novoLivro);
+        Livro novoLivro = cadastroNovoLivro.cadastraLivro(request);
         return novoLivro.toString();
     }
 

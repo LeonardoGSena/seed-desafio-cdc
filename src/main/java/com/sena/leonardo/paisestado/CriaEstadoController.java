@@ -11,14 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CriaEstadoController {
 
-    @PersistenceContext
-    private EntityManager manager;
+    private final CadastroEstado cadastroEstado;
+
+
+    public CriaEstadoController(CadastroEstado cadastroEstado) {
+        this.cadastroEstado = cadastroEstado;
+    }
 
     @PostMapping(value = "/estados")
     @Transactional
     public String criaEstado(@RequestBody @Valid NovoEstadoRequest request) {
-        Estado novoEstado = request.toModel(manager);
-        manager.persist(novoEstado);
+        Estado novoEstado = cadastroEstado.executa(request);
         return novoEstado.toString();
     }
 }

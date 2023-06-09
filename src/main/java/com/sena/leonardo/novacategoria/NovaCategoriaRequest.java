@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.sena.leonardo.compartilhado.UniqueValue;
 import jakarta.validation.constraints.NotBlank;
 
-public class NovaCategoriaRequest {
+public class NovaCategoriaRequest implements DadosNovaCategoria{
 
     @NotBlank
     @UniqueValue(domainClass = Categoria.class, fieldName = "nome")
@@ -17,5 +17,10 @@ public class NovaCategoriaRequest {
 
     public String getNome() {
         return nome;
+    }
+
+    @Override
+    public Categoria toModel() {
+        return new Categoria(this.nome);
     }
 }

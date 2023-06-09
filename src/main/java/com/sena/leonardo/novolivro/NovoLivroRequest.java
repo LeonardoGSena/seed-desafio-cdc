@@ -7,15 +7,18 @@ import com.sena.leonardo.compartilhado.UniqueValue;
 import com.sena.leonardo.novacategoria.Categoria;
 import com.sena.leonardo.novoautor.Autor;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.function.Function;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
-public class NovoLivroRequest {
+public class NovoLivroRequest implements DadosNovoLivro {
 
     @NotBlank
     @UniqueValue(domainClass = Livro.class, fieldName = "titulo")
@@ -66,9 +69,11 @@ public class NovoLivroRequest {
         this.idAutor = idAutor;
     }
 
-    public Livro toModel(EntityManager manager) {
-        @NotNull Autor autor = manager.find(Autor.class, idAutor);
-        @NotNull Categoria categoria = manager.find(Categoria.class, idCategoria);
+    public Livro toModel(Function<Long, Autor> carregaAutor, Function<Long, Categoria> carregaCategoria) {
+        @NotNull
+        Autor autor = carregaAutor.apply(idAutor);
+        @NotNull
+        Categoria categoria = carregaCategoria.apply(idCategoria);
 
         Assert.state(autor!=null, "Você está tentando cadastrar um livro para um autor que não esta cadastrado no banco " +idAutor);
         Assert.state(categoria!=null, "Você está tentando cadastrar um livro para uma categoria que não esta cadastrada no banco " +idCategoria);
